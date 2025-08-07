@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuzin esse find?</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: white;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      margin-top: 100px;
+      font-size: 2.5em;
+    }
+    .btn {
+      font-size: 1.2em;
+      padding: 10px 30px;
+      margin: 30px;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+    }
+    #nao {
+      position: absolute;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>cuzin esse find?</h1>
+  <button class="btn" id="sim">Sim</button>
+  <button class="btn" id="nao">Não</button>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const naoBtn = document.getElementById('nao');
+    const simBtn = document.getElementById('sim');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    function moveNao() {
+      const x = Math.random() * (window.innerWidth - 100);
+      const y = Math.random() * (window.innerHeight - 50);
+      naoBtn.style.left = `${x}px`;
+      naoBtn.style.top = `${y}px`;
+    }
+
+    naoBtn.addEventListener('mouseover', moveNao);
+    naoBtn.addEventListener('touchstart', moveNao);
+
+    simBtn.addEventListener('click', () => {
+      launchFireworks();
+    });
+
+    function launchFireworks() {
+      let particles = [];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+          radius: Math.random() * 3 + 2,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+          dx: (Math.random() - 0.5) * 10,
+          dy: (Math.random() - 0.5) * 10,
+          life: 100
+        });
+      }
+
+      const interval = setInterval(() => {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+          p.x += p.dx;
+          p.y += p.dy;
+          p.life--;
+        });
+
+        particles = particles.filter(p => p.life > 0);
+        if (particles.length === 0) clearInterval(interval);
+      }, 30);
+    }
+  </script>
+</body>
+</html>
